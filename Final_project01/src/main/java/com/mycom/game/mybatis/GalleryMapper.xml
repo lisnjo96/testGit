@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="gallery">
+	
+	<!-- 자주 사용하는 sql 문을 미리 정의해 놓기 -->
+	<sql id="galleryColumn">
+		num,writer,title,content,downCount,saveFileName,orgFileName,fileSize,
+		TO_CHAR(regdate, 'YYYY.MM.DD AM HH:MI') AS regdate
+	</sql>
+	
+	<delete id="delete" parameterType="int">
+		DELETE FROM gallery
+		WHERE num=#{num}
+	</delete>
+	<update id="addDownCount" parameterType="int">
+		UPDATE gallery
+		SET downCount=downCount+1
+		WHERE num=#{num}
+	</update>
+	<update id="update" parameterType="galleryDto">
+		UPDATE gallery
+		SET title=#{title}, content=#{content}
+		WHERE num=#{num}
+	</update>
+	<select id="getData" parameterType="int"
+		resultType="galleryDto">
+		SELECT <include refid="galleryColumn"/>
+		FROM gallery
+		WHERE num=#{num}
+	</select>
+	
+	<insert id="insert" parameterType="galleryDto">
+		INSERT INTO gallery
+		(num,writer,title,content,downCount,orgFileName,saveFileName,
+			fileSize,regdate)
+		VALUES(gallery_seq.NEXTVAL,#{writer},#{title},#{content},
+		#{downCount}, #{orgFileName}, #{saveFileName}, #{fileSize},
+			SYSDATE)
+	</insert>
+	<select id="getList" parameterType="galleryDto"
+		resultType="galleryDto">
+		SELECT *
+		FROM (SELECT result1.*, ROWNUM rnum
+			  FROM ( SELECT <include refid="galleryColumn"/>
+					FROM gallery
+					ORDER BY num DESC ) result1
+			  )
+		WHERE rnum BETWEEN 1 AND 100
+	</select>
+	<select id="getCount" resultType="int">
+		SELECT NVL(MAX(ROWNUM), 0) 
+		FROM gallery
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+

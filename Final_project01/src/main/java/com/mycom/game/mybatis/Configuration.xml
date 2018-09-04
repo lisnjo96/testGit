@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	
+	<typeAliases>
+		<typeAlias type="com.mycom.game.data.dto.DataDto" alias="dataDto"/>
+		<typeAlias type="com.mycom.game.users.dto.UsersDto" alias="usersDto"/>
+		<typeAlias type="com.mycom.game.market.dto.MarketDto" alias="marketDto"/>
+		<typeAlias type="com.mycom.game.market.dto.OrderDto" alias="orderDto"/>
+		<typeAlias type="com.mycom.game.community.dto.CommunityDto"	alias="communityDto"/>
+		<typeAlias type="com.mycom.game.community.dto.CustomerServiceDto" alias="customerServiceDto"/>
+		<typeAlias type="com.mycom.game.community.dto.CustomerServiceCommentDto" alias="customerServiceCommentDto"/>
+		<typeAlias type="com.mycom.game.gallery.dto.GalleryDto"	alias="galleryDto"/>
+		<typeAlias type="com.mycom.game.community.dto.BoardDto" alias="boardDto"/>
+	</typeAliases>
+
+	<mappers>
+		<mapper resource="com/mycom/game/mybatis/DataMapper.xml"/>
+		<mapper resource="com/mycom/game/mybatis/UsersMapper.xml"/>
+		<mapper resource="com/mycom/game/mybatis/MarketMapper.xml"/>
+		<mapper resource="com/mycom/game/mybatis/CommunityMapper.xml"/>
+		<mapper resource="com/mycom/game/mybatis/CustomerServiceMapper.xml"/>
+		<mapper resource="com/mycom/game/mybatis/CustomerServiceCommentMapper.xml"/>
+		<mapper resource="com/mycom/game/mybatis/GalleryMapper.xml"/>
+		<mapper resource="com/mycom/game/mybatis/BoardMapper.xml"/>
+	</mappers>
+</configuration>
+
+
+
+
+
+
+

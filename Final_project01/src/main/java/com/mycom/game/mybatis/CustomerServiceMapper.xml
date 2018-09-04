@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="customerService">
+	<sql id="customerServiceColumn">
+		num,writer,title,content,viewCount,
+		TO_CHAR(regdate,'YYYY.MM.DD AM HH:MI') AS regdate,choose,secret
+	</sql>
+
+	<insert id="insert" parameterType="customerServiceDto">
+		INSERT INTO board_customerservice
+		(num, writer, title, content, viewCount, regdate, choose, secret)
+		VALUES(board_customerservice_seq.NEXTVAL, #{writer}, #{title},
+			#{content}, #{viewCount}, SYSDATE, #{choose}, #{secret})
+	</insert>
+	
+	
+	<select id="getCount" parameterType="customerServiceDto" resultType="int">
+		SELECT NVL(MAX(ROWNUM), 0)
+		FROM board_customerservice
+		<where>
+			<if test="writer != null">
+				OR writer LIKE '%'||#{writer}||'%'
+			</if>
+			<if test="title != null">
+				OR title LIKE '%'||#{title}||'%'
+			</if>
+			<if test="content !=null">
+				OR content LIKE '%'||#{content}||'%'
+			</if>
+		</where>
+	</select>
+	
+	<select id="getList" parameterType="customerServiceDto"
+		resultType="customerServiceDto">
+		SELECT *
+		FROM (SELECT result1.*, ROWNUM rnum
+			  FROM ( SELECT <include refid="customerServiceColumn"/>
+					FROM board_customerservice
+					<where>
+						<if test="writer != null">
+							OR writer LIKE '%'||#{writer}||'%'
+						</if>
+						<if test="title != null">
+							OR title LIKE '%'||#{title}||'%'
+						</if>
+						<if test="content !=null">
+							OR content LIKE '%'||#{content}||'%'
+						</if>
+					</where>
+					ORDER BY num DESC ) result1
+			  )
+		WHERE rnum BETWEEN #{startRowNum} AND #{endRowNum}
+	</select>
+	
+	<select id="getData" parameterType="customerServiceDto" 
+		resultType="customerServiceDto">
+		SELECT result1.*
+		FROM ( SELECT <include refid="customerServiceColumn"/>,
+				LAG(num, 1, 0) OVER(ORDER BY num DESC) prevNum,
+				LEAD(num, 1, 0) OVER(ORDER BY num DESC) nextNum
+			 FROM board_customerservice
+			 <where>
+				<if test="writer != null">
+					OR writer LIKE '%'||#{writer}||'%'
+				</if>
+				<if test="title != null">
+					OR title LIKE '%'||#{title}||'%'
+				</if>
+				<if test="content !=null">
+					OR content LIKE '%'||#{content}||'%'
+				</if>
+			</where>
+			 ORDER BY num DESC ) result1
+		WHERE num=#{num}			
+	</select>
+	
+	<delete id="delete" parameterType="int">
+		DELETE FROM board_customerservice
+		WHERE num=#{num}
+	</delete>
+	
+	<update id="update" parameterType="customerServiceDto">
+		UPDATE board_customerservice
+		SET title=#{title},content=#{content}
+		WHERE num=#{num}
+	</update>
+	
+	<update id="updateChoose" parameterType="int">
+		UPDATE board_customerservice
+		SET choose=1
+		WHERE num=#{num}
+	</update>
+	
+	<update id="addViewCount" parameterType="int">
+		UPDATE board_customerservice
+		SET viewCount=viewCount+1
+		WHERE num=#{num}
+	</update>
+	
+	<select id="limitSelect"
+		resultType="String">
+      select title 
+      from board_customerservice
+      <![CDATA[ where rownum <= 3 ]]>
+      ORDER BY regdate DESC
+   </select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="community">
+	
+	<update id="addScoreCount" parameterType="String">
+		UPDATE community_status
+		SET score=score+25
+		WHERE id=#{id}
+	</update>
+	
+	<select id="getData" parameterType="String"
+		resultType="communityDto">
+		SELECT id,counselor,score
+		FROM community_status
+		WHERE id=#{id}
+	</select>
+	
+	<select id="getList" parameterType="communityDto"
+		resultType="communityDto">
+		SELECT id,counselor,score
+		FROM community_status status
+		<![CDATA[ WHERE ROWNUM <= 5 ]]>
+	</select>
+	
+	<insert id="insert" parameterType="customerServiceDto">
+		INSERT INTO community_status(id,counselor,score)
+		VALUES(#{id},#{counselor},#{score})
+	</insert>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+

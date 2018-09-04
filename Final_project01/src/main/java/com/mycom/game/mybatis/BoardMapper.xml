@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="board">
+	<sql id="boardColumn">
+		num,writer,title,content,viewCount,
+		TO_CHAR(regdate,'YYYY.MM.DD AM HH:MI') AS regdate
+	</sql>
+
+	<insert id="insert" parameterType="boardDto">
+		INSERT INTO board_free
+		(num, writer, title, content, viewCount, regdate)
+		VALUES(board_free_seq.NEXTVAL, #{writer}, #{title},
+			#{content}, #{viewCount}, SYSDATE)
+	</insert>
+	
+	
+	<select id="getCount" parameterType="boardDto" resultType="int">
+		SELECT NVL(MAX(ROWNUM), 0)
+		FROM board_free
+		<where>
+			<if test="writer != null">
+				OR writer LIKE '%'||#{writer}||'%'
+			</if>
+			<if test="title != null">
+				OR title LIKE '%'||#{title}||'%'
+			</if>
+			<if test="content !=null">
+				OR content LIKE '%'||#{content}||'%'
+			</if>
+		</where>
+	</select>
+	
+	<select id="getList" parameterType="boardDto"
+		resultType="boardDto">
+		SELECT *
+		FROM (SELECT result1.*, ROWNUM rnum
+			  FROM ( SELECT <include refid="boardColumn"/>
+					FROM board_free
+					<where>
+						<if test="writer != null">
+							OR writer LIKE '%'||#{writer}||'%'
+						</if>
+						<if test="title != null">
+							OR title LIKE '%'||#{title}||'%'
+						</if>
+						<if test="content !=null">
+							OR content LIKE '%'||#{content}||'%'
+						</if>
+					</where>
+					ORDER BY num DESC ) result1
+			  )
+		WHERE rnum BETWEEN #{startRowNum} AND #{endRowNum}
+	</select>
+	
+	<select id="getData" parameterType="boardDto" 
+		resultType="boardDto">
+		SELECT result1.*
+		FROM ( SELECT <include refid="boardColumn"/>,
+				LAG(num, 1, 0) OVER(ORDER BY num DESC) prevNum,
+				LEAD(num, 1, 0) OVER(ORDER BY num DESC) nextNum
+			 FROM board_free
+			 <where>
+				<if test="writer != null">
+					OR writer LIKE '%'||#{writer}||'%'
+				</if>
+				<if test="title != null">
+					OR title LIKE '%'||#{title}||'%'
+				</if>
+				<if test="content !=null">
+					OR content LIKE '%'||#{content}||'%'
+				</if>
+			</where>
+			 ORDER BY num DESC ) result1
+		WHERE num=#{num}			
+	</select>
+	
+	<delete id="delete" parameterType="int">
+		DELETE FROM board_free
+		WHERE num=#{num}
+	</delete>
+	
+	<update id="update" parameterType="boardDto">
+		UPDATE board_free
+		SET title=#{title},content=#{content}
+		WHERE num=#{num}
+	</update>
+	
+	<update id="addViewCount" parameterType="int">
+		UPDATE board_free
+		SET viewCount=viewCount+1
+		WHERE num=#{num}
+	</update>
+	
+	<update id="addGradeCount" parameterType="int">
+		UPDATE board_free
+		SET grade=grade+1
+		WHERE num=#{num}
+	</update>
+	
+	<update id="addExcellrentCount" parameterType="int">
+		UPDATE board_free
+		SET excellrent=excellrent+1
+		WHERE num=#{num}
+	</update>
+	
+	<update id="addGoodCount" parameterType="int">
+		UPDATE board_free
+		SET good=good+1
+		WHERE num=#{num}
+	</update>
+	
+	<update id="addBadCount" parameterType="int">
+		UPDATE board_free
+		SET bad=bad+1
+		WHERE num=#{num}
+	</update>
+</mapper>
+
+
+
+
+
+
+

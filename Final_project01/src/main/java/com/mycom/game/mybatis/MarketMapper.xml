@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="market">
+	<select id="getList" resultType="marketDto">
+		SELECT code, name, price, remainCount, saveFileName, content, grade, writer
+		FROM shop
+		ORDER BY code DESC
+	</select>
+	
+	<select id="getPrice" parameterType="int" resultType="int">
+		SELECT price
+		FROM shop
+		WHERE code=#{code}	
+	</select>
+	
+	<select id="getMoney" parameterType="string" resultType="int">
+		SELECT money
+		FROM client_account
+		WHERE id=#{buyer}	
+	</select>
+	
+	<update id="minusMoney" parameterType="marketDto">
+		UPDATE client_account
+		SET money=money-#{price}
+		WHERE id=#{buyer}
+	</update>
+	
+	<update id="plusMoney" parameterType="orderDto">
+		UPDATE client_account
+		SET money=money+#{money}
+		WHERE id=#{buyer}
+	</update>
+	
+	<update id="plusPoint" parameterType="marketDto">
+		UPDATE client_account
+		SET point=point + #{price}*0.1
+		WHERE id=#{buyer}
+	</update>
+	
+	<update id="minusCount" parameterType="int">
+		UPDATE shop
+		SET remainCount=remainCount-1
+		WHERE code=#{code}
+	</update>
+	
+	<insert id="addOrder" parameterType="orderDto">
+		INSERT INTO client_order
+		(num, id, code, addr)
+		VALUES(client_order_seq.NEXTVAL, #{buyer}, #{code}, #{addr})
+	</insert>
+	
+	<select id="getSeq" resultType="int">
+		SELECT shop_seq.NEXTVAL
+		FROM dual
+	</select>
+	
+	<insert id="insertA" parameterType="marketDto">
+		INSERT INTO shop
+		(code, writer, name, price, grade, remainCount, orgFileName, saveFileName, fileSize, content, regdate)
+		VALUES(#{code}, #{writer}, #{name}, #{price}, 0, #{remainCount},
+		#{orgFileName}, #{saveFileName}, #{fileSize}, #{content}, SYSDATE)
+	</insert>
+	
+	<insert id="insertB" parameterType="marketDto">
+		INSERT INTO catalog
+		(code, mainCat, secCat, thirdCat)
+		VALUES(#{code}, #{mainCat}, NULL, NULL)
+	</insert>
+	
+	<select id="getData" parameterType="int" resultType="marketDto">
+		SELECT code, name, price, remainCount, saveFileName, content, grade, writer
+		FROM shop
+		WHERE code=#{code}
+	</select>
+	
+	<select id="getDataB" parameterType="int" resultType="marketDto">
+		SELECT mainCat
+		FROM catalog
+		WHERE code=#{code}
+	</select>
+	
+	<update id="update" parameterType="marketDto">
+		UPDATE shop
+		SET writer=#{writer}, name=#{name}, price=#{price}, remainCount=#{remainCount}, content=#{content}
+    	<if test="saveFileName != null">
+    	orgFileName=#{orgFileName},saveFileName=#{saveFileName},
+    	fileSize=#{fileSize}
+    	</if>
+		WHERE code=#{code}
+	</update>
+	
+	<update id="updateB" parameterType="marketDto">
+		UPDATE catalog
+		SET mainCat=#{mainCat}
+		WHERE code=#{code}
+	</update>
+	
+	<delete id="delete" parameterType="int">
+		DELETE FROM shop
+	    WHERE code=#{code}
+    </delete>
+</mapper>
