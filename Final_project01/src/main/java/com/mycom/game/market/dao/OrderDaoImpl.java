@@ -27,7 +27,7 @@ public class OrderDaoImpl implements OrderDao{
 	
 	@Override
 	public void plusMoney(OrderDto dto) {
-		session.insert("market.plusMoney", dto);
+		session.update("market.plusMoney", dto);
 	}
 
 	@Override
