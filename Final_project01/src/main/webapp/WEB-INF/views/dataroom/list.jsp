@@ -65,7 +65,7 @@ p{
 <div class="container list">
 	<header class="page-header">
 		<h1 class="page-title">
-			자료실
+			자료실이다다다
 			<a href="uploadform.do" class="floatright"><i class="fas fa-plus-circle"></i></a>
 		</h1>
 	
